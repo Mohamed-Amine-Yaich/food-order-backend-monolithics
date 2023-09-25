@@ -14,6 +14,16 @@ step 1 setting up project and dependencies:
  ts-node-dev : dev tool, enhance dev experience by running and watch typescript code in a node js environment 
 
 step 2 prepare project structure :
+
+ -creating serveral dir for sturcturing this project (models,controllers,dto,config,routes,services,middelwares,images)
+ dto (data transfer object): for defining the shape of the date that we attend from the request 
  
+step 3 connecting to db and adding dependencies :
+ yarn add mongoose @types/mongoose 
+ create first model vandor (create vandorDoc interface, VandorSchema and create the model using the Schema and the interface with "const model = mongoose.model<modelInterface>('modelName',modelScema")  ) 
+ conect to db 
+
+step 4 addin bcrypt @types/bcrypt 
+ -encrypt password with some unicode
 
        
