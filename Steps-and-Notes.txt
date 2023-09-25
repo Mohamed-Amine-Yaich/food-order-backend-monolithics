@@ -1,0 +1,19 @@
+
+step 1 setting up project and dependencies: 
+ yarn/npm init :  start a node project by creating a package.json file  in the current dir 
+ tsc init  : Created a new tsconfig.json
+ adding couple of node dependencies : express nodemon body-parser cors ts-node-dev typescript @types/express @types/cors
+
+ express: node js framework and a robust tooling for creating http servers 
+ nodemon: helping tool during development that keep restarting the server(node app) when file changes  
+ body-parser: is a middleware library used in node js app,  parse incomming http request body in a more convenient format for your app to work with.
+             'body-parser' can handle various types of request bodies, including JSON, URL-encoded, 
+              'and multipart/form-data. It examines the Content-Type header of the incoming request and parses the body accordingly.
+ cors : Cross-Origin Resource Sharing (CORS) is a crucial concept for enabling or restricting cross-origin HTTP requests in web applications
+       =>mean it allow to specify which origin are allow to access resouces on server
+ ts-node-dev : dev tool, enhance dev experience by running and watch typescript code in a node js environment 
+
+step 2 prepare project structure :
+ 
+
+       
