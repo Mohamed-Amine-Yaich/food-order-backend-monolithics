@@ -26,4 +26,6 @@ step 3 connecting to db and adding dependencies :
 step 4 addin bcrypt @types/bcrypt 
  -encrypt password with some unicode (salt)
 
+ step 4 vandor CRUD ,Vandor login and authentication(jwt and middellware)
+
        
