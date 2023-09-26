@@ -10,7 +10,7 @@ interface VandorDoc extends Document {
   password: string;
   phone: string;
   salt: string;
-  serviceAvailable: string;
+  serviceAvailable: boolean;
   coverImage: [string];
   rating: number;
  // foods: string;
@@ -18,17 +18,17 @@ interface VandorDoc extends Document {
 
 const VandorSchema = new Schema(
   {
-    name: { type: String },
-    ownerName: { type: String },
-    foodType: { type: [] },
-    pincode: { type: String },
-    adress: { type: String },
-    email: { type: String},
-    password: { type: String , },
-    phone: { type: String },
-    salt: { type: String },
-    serviceAvailable: { type: String },
-    coverImage: { type: [String] },
+    name: { type: String, required:true },
+    ownerName: { type: String , required:true},
+    foodType: { type: [], required:true },
+    pincode: { type: String, required:true },
+    adress: { type: String , required:true},
+    email: { type: String, required:true},
+    password: { type: String , required:true},
+    phone: { type: String, required:true },
+    salt: { type: String, required:true },
+    serviceAvailable: { type: Boolean, required:true },
+    coverImage: { type: [String], required:true },
     rating: { type: Number },
     //foods: [{ type: mongoose.SchemaTypes.ObjectId, ref: "food" }], //ref to  other schema
   },
@@ -40,7 +40,9 @@ const VandorSchema = new Schema(
         delete ret.password;
         delete ret.__v
         delete ret.salt
-        delete ret._id
+        delete ret.createdAt
+        delete ret.updatedAt
+        
       },
     },
   }

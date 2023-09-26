@@ -24,6 +24,6 @@ step 3 connecting to db and adding dependencies :
  conect to db 
 
 step 4 addin bcrypt @types/bcrypt 
- -encrypt password with some unicode
+ -encrypt password with some unicode (salt)
 
        

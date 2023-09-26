@@ -9,3 +9,20 @@ password : string,
 phone : string
 
 }
+export interface VandorLoginInput {
+    email: string,
+    password : string,
+
+
+}
+
+export interface VandorAuthPayload {
+    name : string
+    _id: string
+    email : string
+
+}
+
+export interface  VandorUpdateInput {
+    name : string ,foodType: [string],adress: string
+}
