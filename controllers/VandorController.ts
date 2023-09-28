@@ -137,16 +137,16 @@ export const UpdateVandorCoverImage = async (
   try {
     const vandorId = req.vandor?._id;
     const vandor = await Vandor.findById(vandorId);
-console.log('files',req.files)
-/*     const files=  req.files?.((file: Express.Multer.File)=>file.filename)
- */
+   console.log('files',req.files)
+    const files=  req.files as [Express.Multer.File]
+  const coverImages = files.map((file)=>file.filename) 
     
 
     if (vandor === null) {
       return res.json({ message: "there is no such vandor" });
     }
-    if(true){
-      vandor.coverImage.push(...vandor.coverImage)
+    if(coverImages.length>0){
+      vandor.coverImage.push(...vandor.coverImage,...coverImages)
       vandor.save();
       return res.status(200).json({
         success: true,
@@ -159,7 +159,7 @@ console.log('files',req.files)
     return res.status(500).json({
       success: false,
       data: {
-        message: "error occured !",
+        message: "images are not addes correctly  !",
      
       },
     });
