@@ -28,4 +28,8 @@ step 4 addin bcrypt @types/bcrypt
 
  step 4 vandor CRUD ,Vandor login and authentication(jwt and middellware)
 
+ step 5 : adding food(endpoint) to vandor and update vandor get all food of a vandor (endpoint)
+
+ step  6 : upload file with multer 
+
        
