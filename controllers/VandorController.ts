@@ -159,7 +159,7 @@ export const UpdateVandorCoverImage = async (
     return res.status(500).json({
       success: false,
       data: {
-        message: "images are not addes correctly  !",
+        message: "files are not added correctly check your files extention !",
      
       },
     });
@@ -188,7 +188,7 @@ export const PostVandorNewFood = async (
       cathegory,
       discription,
       rating,
-      images,
+  /*     images, */
       price,
       readyTime,
     } = <CreateFoodInput>req.body;
@@ -198,6 +198,12 @@ export const PostVandorNewFood = async (
         message: "food alrady exist in this vandor ",
       });
     }
+    const files=  req.files as [Express.Multer.File]
+    const coverImages = files.map((file)=>file.filename) 
+      
+  
+    
+
     //create new food using food model
     const CreatedFood = await Food.create({
       name,
@@ -208,19 +214,18 @@ export const PostVandorNewFood = async (
       cathegory,
       foodType,
       rating,
-      images,
+      images:coverImages,
     });
 
     //add the food to the current vandor that is currently login
   if(CreatedFood){
     vandor.foods.push(CreatedFood);
-
     vandor.save();
     return res.status(200).json({
       success: true,
       data: {
         message: "food is created !",
-        vandor: vandor,
+        vandor,
       },
     });
   }

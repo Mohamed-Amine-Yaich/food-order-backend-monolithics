@@ -1,4 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import multer from "multer";
+
+type Ifile = Express.Multer.File
 
 interface FoodDoc extends Document {
   name: string;
@@ -9,7 +12,7 @@ interface FoodDoc extends Document {
      cathegory:string
      foodType: string;
      rating:number
-     images:[string]
+     images:[Express.Multer.File]
 }
 
 const FoodSchema = new Schema(
@@ -22,7 +25,7 @@ const FoodSchema = new Schema(
      cathegory:{type : String},
      foodType: {type : String},
      rating:{type : Number},
-     images:{type : [String]}
+     images:{type:[Object]as unknown as  [Ifile], required :true} //work around 
   },
   {
     timestamps: true,

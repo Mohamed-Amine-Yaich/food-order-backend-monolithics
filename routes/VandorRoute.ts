@@ -10,7 +10,8 @@ destination :(req, file, callback)=> {
 callback(null,process.cwd()+'/images')
 },
 filename(req, file, callback) {
-    callback(null,Date.now()+`${file.originalname}`)//this callback to determine the name of the file original file name containe file extention
+const fileName = parseInt(new Date().getTime().toString())+file.originalname
+    callback(null,fileName)//this callback to determine the name of the file original file name containe file extention
 },
 
 })
@@ -44,7 +45,7 @@ router.patch('/profile',UpdateVandorProfile)
 router.patch('/coverImage',upload.array('coverImage',10),UpdateVandorCoverImage)
 router.patch('/service',UpdateVandorService)
 
-router.post('/food',PostVandorNewFood)
+router.post('/food',upload.array('images',10),PostVandorNewFood)
 router.get('/food',GetVandorAllFood)
 router.get('/food/:id',GetVandorFood)
 router.patch('/food/:id',UpdateVandorFood)

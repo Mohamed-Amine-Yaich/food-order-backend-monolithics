@@ -7,7 +7,7 @@ export interface CreateFoodInput {
      cathegory:string
      foodType: string;
      rating:number
-     images:[string]
+     images:[Express.Multer.File]
 
 }
 
@@ -21,5 +21,5 @@ export interface  FoodUpdateInput {
     cathegory:string
     foodType: string;
     rating:number
-    images:[string]
+    images:[Express.Multer.File]
 }
