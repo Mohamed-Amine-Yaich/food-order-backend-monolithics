@@ -19,11 +19,11 @@ export const GenerateOTP = () => {
 
 //request for OTP with twilio 
 
-export const RequestOTP =(otp:string,otpExpiry:Date,CustomerPhone:string)=>{
+export const RequestOTP =async (otp:string,otpExpiry:Date,CustomerPhone:string)=>{
 try {
   const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
   
-  client.messages
+ return await client.messages
     .create({
       body: `Hello from AmineDelivery your one time code is ${otp}
       this code will expire after this date ${otpExpiry} `,
