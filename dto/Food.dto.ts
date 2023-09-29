@@ -11,6 +11,14 @@ export interface CreateFoodInput {
 
 }
 
+export interface FoodSearchInput {
+name : string,
+price : number,
+cathegory:string
+foodType: string;
+rating:number 
+}
+
 
 
 export interface  FoodUpdateInput {
