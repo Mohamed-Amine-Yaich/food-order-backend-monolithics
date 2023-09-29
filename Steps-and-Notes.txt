@@ -32,4 +32,9 @@ step 4 addin bcrypt @types/bcrypt
 
  step  6 : upload file with multer 
 
+ step 7 : some code refactor and shopping route and endpoints
+        - creating services dir for refactoring the connection to db part and the hole application part
+        - adding shopping route and some endpoints for handling some restaurants and foods search 
+        -pincode indicate a specific location mean it can be the same for multipule restaurants
+
        

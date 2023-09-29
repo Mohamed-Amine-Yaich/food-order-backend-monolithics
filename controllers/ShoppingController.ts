@@ -13,7 +13,7 @@ export const GetFoodAvailability = async (
     const pincode = req.params.pincode; 
     console.log(pincode)
  //check if the vandor is on service or not 
-  const vandor = await Vandor.findOne({pincode,serviceAvailable:true})
+  const vandor = await Vandor.find({pincode,serviceAvailable:true})
   console.log(vandor)
   if(vandor==null){
     return res.status(200).json({
@@ -47,8 +47,9 @@ export const GetTopRestaurants = async (
   res: Response,
 ) => {
   try {
+    const pincode = req.params.pincode; 
 // find with a desending filter by rating
-const TopVandors = await Vandor.find().sort({ rating: -1 })
+const TopVandors = await Vandor.find({pincode,serviceAvailable:true}).sort({ rating: -1 })
 if (TopVandors === null) {
   return res.status(200).json({ message: "no vandor" });
 }
@@ -77,7 +78,7 @@ export const GetFoodIn30Min= async (
     //need to seek for vendor by pincode and populate food then apply the filter 
     //filter foods that take time less than 30  //lt , lte, gt ,gte
     //populate in Mongoose, you can use the populate method to retrieve a field in a model that refers to another model using a reference (typically an ObjectId) and populate it with the actual data from the referenced model.
-    const vandor = await Vandor.findOne({pincode}).populate({path : 'foods',match:{readyTime : {$lt:30}}})
+    const vandor = await Vandor.findOne({pincode,serviceAvailable:true}).populate({path : 'foods',match:{readyTime : {$lt:30}}})
    console.log(vandor?._id)
     //re-use
     if (vandor === null || vandor.foods.length<1 ) {
@@ -113,7 +114,7 @@ const filter = <FoodSearchInput>req.body
 
 const nameRegExp = new RegExp(filter.name) 
     //need to seek for vendor by pincode and populate food then apply the filter by the serach value of the input 
-    const vendor = await Vandor.findOne({pincode}).populate({path : 'foods',match:{name :{$regex : nameRegExp  } }}) 
+    const vendor = await Vandor.findOne({pincode,serviceAvailable:true}).populate({path : 'foods',match:{name :{$regex : nameRegExp  } }}) 
    
    
     //filter foods by the search value I think from body  
