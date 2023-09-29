@@ -37,4 +37,13 @@ step 4 addin bcrypt @types/bcrypt
         - adding shopping route and some endpoints for handling some restaurants and foods search 
         -pincode indicate a specific location mean it can be the same for multipule restaurants
 
-       
+step 8 : adding the customer route and endpoints 
+       1- customer register/login (public route)
+         -for register we need dto interface for user data input but validation is performed manually in controller 
+         =>for that we use class validation packages on the customerRegisterInputs dto (check file) 
+         class-validator
+         class-transformer 
+         -after creating a new user Doc send OTP then generatSignature(jwt),then send Response to client
+       2-customer authentication (middellware for ensure authenticated user )
+       3-private routes => verify / otp / get and update profile
+       4-cart (order and payment) 

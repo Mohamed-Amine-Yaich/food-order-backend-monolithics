@@ -145,7 +145,7 @@ export const GetRestaurantById = async (
     //get the id from the params
     const vendorId = req.params.id; // Get the ID from request parameters
     const vendor = await Vandor.findById(vendorId);
- //re-use
+    //re-use
     if (vendor === null) {
       return res.json({ message: "no such vendor are saved" });
     }

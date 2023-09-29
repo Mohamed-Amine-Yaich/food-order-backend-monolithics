@@ -1,7 +1,6 @@
 import { Application } from "express";
-import { AdminRoute, VandorRoute } from "../routes";
+import { AdminRoute, VandorRoute,CustomerRoute,ShoppingRoute } from "../routes";
 import bodyParser from "body-parser";
-import { ShoppingRoute } from "../routes/ShoppingRoute";
 
 export const ExpressApp = (app: Application) => {
   //before reading from the body must use body-parser to parse to body of the request into some convenient format to dealwith  (depend of request content type)
@@ -17,7 +16,7 @@ export const ExpressApp = (app: Application) => {
  
   app.use("/admin", AdminRoute);
   app.use('/shopping',ShoppingRoute)
- 
+app.use('/customer',CustomerRoute)
   app.use("/vandor", VandorRoute);
  
 

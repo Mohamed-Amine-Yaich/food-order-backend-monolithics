@@ -20,7 +20,7 @@ const VerifyPassword = async (password: string, hashedPassword: string) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
-const GenrateJWT = async (payload: VandorAuthPayload) => {
+const GenrateJWT = async (payload:AuthPayload ) => {
   return jwt.sign(payload, SECRET_KEY);
 };
 

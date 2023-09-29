@@ -1,4 +1,5 @@
 
-import { VandorAuthPayload } from "./Vandor.dto";
+import { VandorAuthPayload,CustomerAuthPayload } from "./index";
 
-export type AuthPayload = VandorAuthPayload|undefined // or other authPayload other than vandor
+
+export type AuthPayload = VandorAuthPayload|CustomerAuthPayload // or other authPayload other than vandor

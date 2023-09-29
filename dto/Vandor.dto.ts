@@ -17,8 +17,8 @@ export interface VandorLoginInput {
 }
 
 export interface VandorAuthPayload {
-    name : string
     _id: string
+    name : string
     email : string
 
 }
