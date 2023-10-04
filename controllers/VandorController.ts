@@ -54,7 +54,7 @@ export const GetVandorProfile = async (
   next: NextFunction
 ) => {
   try {
-    const vandorId = req.vandor?._id;
+    const vandorId = req.user?._id;
     const vandor = await Vandor.findById(vandorId);
 
     if (vandor === null) {
@@ -79,7 +79,7 @@ export const UpdateVandorProfile = async (
   next: NextFunction
 ) => {
   try {
-    const vandorId = req.vandor?._id;
+    const vandorId = req.user?._id;
     const vandor = await Vandor.findById(vandorId);
 
     if (vandor === null) {
@@ -109,7 +109,7 @@ export const UpdateVandorService = async (
   next: NextFunction
 ) => {
   try {
-    const vandorId = req.vandor?._id;
+    const vandorId = req.user?._id;
     const vandor = await Vandor.findById(vandorId);
 
     if (vandor === null) {
@@ -135,7 +135,7 @@ export const UpdateVandorCoverImage = async (
   next: NextFunction
 ) => {
   try {
-    const vandorId = req.vandor?._id;
+    const vandorId = req.user?._id;
     const vandor = await Vandor.findById(vandorId);
    console.log('files',req.files)
     const files=  req.files as [Express.Multer.File]
@@ -176,7 +176,7 @@ export const PostVandorNewFood = async (
   next: NextFunction
 ) => {
   try {
-    const logedvandorId = req.vandor?._id;
+    const logedvandorId = req.user?._id;
     const vandor = await Vandor.findById(logedvandorId);
 
     if (vandor === null) {
@@ -248,7 +248,7 @@ export const UpdateVandorFood = async (
   next: NextFunction
 ) => {
   try {
-    const logedvandorId = req.vandor?._id;
+    const logedvandorId = req.user?._id;
     const vandor = await Vandor.findById(logedvandorId);
     const FoodId = req.params.id
     if (vandor === null) {
@@ -320,7 +320,7 @@ export const GetVandorFood = async (
   next: NextFunction
 ) => {
   try {
-    const vandorId = req.vandor?._id;
+    const vandorId = req.user?._id;
     const foodId = req.params.id
     const food = await Food.findById(foodId);
     if(food===null){
@@ -360,7 +360,7 @@ export const GetVandorAllFood = async (
 ) => {
 
     try {
-      const vandorId = req.vandor?._id;
+      const vandorId = req.user?._id;
       const FoodList = await Food.find({vandorId});
      
       return res.status(200).json({

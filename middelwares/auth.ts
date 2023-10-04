@@ -6,7 +6,7 @@ import { AuthPayload } from "../dto";
 declare global {
      namespace Express {
         interface Request {
-          vandor:AuthPayload
+          user:AuthPayload
         }
     }
 
@@ -24,7 +24,7 @@ export const checkAuth = async (
     return res.json({ message: "you are not authenticated try to log in again" });
   }
   //verify token
-  const vandorAuthPayload = await VerifyJWT(token) 
-   req.vandor = vandorAuthPayload
+  const AuthPayload = await VerifyJWT(token) 
+   req.user = AuthPayload
   next()
 };

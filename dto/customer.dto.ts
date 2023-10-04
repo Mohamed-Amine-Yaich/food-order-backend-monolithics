@@ -23,8 +23,41 @@ export class CustomerSignUpInputsClass {
    adress : string
 }
 
+export class CustomerSignInInputsClass {
+
+   @IsEmail()
+   email : string
+   @Length(8, 20)
+   password : string
+}
+
+export class CustomerUpdateProfileInputsClass {
+  
+   @Length(5, 20)
+   firstName : string
+   
+   @Length(5, 20)
+   lastName : string
+
+ /*   @IsEmail()
+   email : string
+
+   @Length(8, 20)
+   password : string */
+  
+   @Length(5, 20)
+   phone :string
+   
+   @Length(5,20)
+   adress : string
+}
+
+export interface CustomerOTPVerificationInputs{
+   otp:string;
+}
 export interface CustomerAuthPayload {
    _id: string,
+   email : string,
    verified: boolean;
-   email : string
+
 }
