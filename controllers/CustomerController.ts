@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomerSignInInputsClass, CustomerSignUpInputsClass,CustomerUpdateProfileInputsClass,CustomerOTPVerificationInputs } from "../dto";
-import { Customer, Vandor } from "../models";
-import { GenerateOTP, GenerateSalt, GenrateJWT, HashPassword, RequestOTP, VerifyPassword } from "../utility";
+import { CustomerSignInInputsClass, CustomerSignUpInputsClass,CustomerUpdateProfileInputsClass,CustomerOTPVerificationInputs, CustomerCreateOrderInput } from "../dto";
+import { Customer, Food,Order } from "../models";
+import { GenerateOTP, GenerateRandomOrderId, GenerateSalt, GenrateJWT, HashPassword, RequestOTP, VerifyPassword } from "../utility";
 import {  plainToInstance } from 'class-transformer';
 import {validate} from 'class-validator'
 
@@ -273,6 +273,7 @@ export const  GetCustomerProfile = async (
     })
   }
 };
+
 export const UpdateCustomerProfile = async (
   req: Request,
   res: Response,
@@ -322,6 +323,136 @@ export const UpdateCustomerProfile = async (
     return res.status(500).json({
       error : 'cannot get user from db by Id'
     })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error : 'internal error occured'
+    })
+  }
+};
+
+//post customer/order
+export const CustomerCreateOrder= async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const  customerId=req?.user._id
+    const customer =await Customer.findById(customerId)
+    if (customer) {
+      //get orders from req.body [{foodId: , unit: }]
+      const orderInputs = <CustomerCreateOrderInput[]>req.body;
+
+      //get latly inputted food
+      const foods = await Food.find({
+        _id: { $in: orderInputs.map((orderedFood) => orderedFood.foodId) },
+      });
+      let totalAmount = 0.0;
+
+      //calculate the amount of the order
+
+      foods.forEach((food) => {
+        orderInputs.map(({ foodId, unit }) => {
+          if ((food._id = foodId)) {
+            totalAmount = totalAmount + unit * food.price;
+          }
+        });
+      });
+
+      //create order
+
+      const createdOrder =await  Order.create({
+        orderId: GenerateRandomOrderId(), //generate a random orderID
+        items: foods,
+        orderDate: new Date(),
+        paidThrought: "COD",
+        paymentResponse: "",
+        orderStatus: "waiting",
+      });
+
+      if (createdOrder) {
+        return res.status(200).json({
+          success: true,
+          data: {
+            createdOrder,
+          },
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: false,
+      error: "something went wrong ",
+    });
+   
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error : 'internal error occured'
+    })
+  }
+};
+
+
+//get orders
+// baseUrl/customer/orders 
+
+export const CustomerGetAllOrders= async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const customerId = req.user._id
+    const currentCustomerOrders =await Order.find({customerId})
+    if(currentCustomerOrders&&currentCustomerOrders.length>0){
+      return res.status(200).json({
+        success : true ,
+        data : {
+          currentCustomerOrders
+        }
+      })
+  
+    }
+
+    return res.status(400).json({
+      error : 'cannot find orders for this customer '
+    })
+   
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error : 'internal error occured'
+    })
+  }
+};
+
+//get order by id 
+//  baseUrl/customer/order/:id
+
+export const CustomerGetOrderById= async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const  orderId=req?.params.id
+    const currentOrder =await Order.findById(orderId).populate('foods') //populate the list of the foods to order document instade of the id
+    if(currentOrder){
+      return res.status(200).json({
+        success : true ,
+        data : {
+          currentOrder
+        }
+      })
+  
+    }
+
+    return res.status(400).json({
+      error : 'this order is no langer exist '
+    })
+   
   } catch (error) {
     console.log(error);
     return res.status(500).json({

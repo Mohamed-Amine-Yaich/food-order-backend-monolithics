@@ -61,3 +61,8 @@ export interface CustomerAuthPayload {
    verified: boolean;
 
 }
+
+export interface CustomerCreateOrderInput {
+   foodId:string,
+   unit: number
+}

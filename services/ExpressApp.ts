@@ -18,7 +18,7 @@ export const ExpressApp = (app: Application) => {
  
   app.use("/admin", AdminRoute);
   app.use('/shopping',ShoppingRoute)
-app.use('/customer',CustomerRoute)
+  app.use('/customer',CustomerRoute)
   app.use("/vandor", VandorRoute);
  
 
