@@ -46,4 +46,14 @@ step 8 : adding the customer route and endpoints
          -after creating a new user Doc send OTP then generatSignature(jwt),then send Response to client
        2-customer authentication (middellware for ensure authenticated user )
        3-private routes => verify / otp / get and update profile
-       4-cart (order and payment) 
+       4-cart (order and payment) (not completed)
+
+step 9 :  deploying monolytics API
+      -dockerize dpendency like node, mongo need to run independently each 
+        in container for performing certain operation 
+      -configure docer compose file to run containers easily through a command 
+       reach to services toghether in the same docker network
+       -engine x : handle reverse proxy for reaching out the exposed port 
+       - setup ci cd server configuration to run our inegration and test coverages 
+         right before deploying our artifacts on the cloud (Degital ocean , aws,elastic beanStalk,google cloud)
+       -manage containers by adding kubernetes and igress engine x 

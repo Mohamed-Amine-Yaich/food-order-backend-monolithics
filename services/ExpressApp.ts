@@ -1,6 +1,6 @@
-import { Application } from "express";
+import express,{ Application } from "express";
 import { AdminRoute, VandorRoute,CustomerRoute,ShoppingRoute } from "../routes";
-import bodyParser from "body-parser";
+import bodyParser from "body-parser"; //we can use express no need for extra library
 
 export const ExpressApp = (app: Application) => {
   //before reading from the body must use body-parser to parse to body of the request into some convenient format to dealwith  (depend of request content type)
@@ -10,6 +10,8 @@ export const ExpressApp = (app: Application) => {
   // parse application/json
  
   app.use(bodyParser.json());
+  //app.use(express.json());
+  
   //set static folder
   /* app.use(express.static('images'));
    */
