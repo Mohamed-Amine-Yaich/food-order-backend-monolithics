@@ -60,6 +60,7 @@ console.log(validationErrors)
     otpExpiry,
     lat:0,
     lng:0,
+    orders:[]
     });
 
    if(CreatedCustomer){
@@ -345,17 +346,20 @@ export const CustomerCreateOrder= async (
       const orderInputs = <CustomerCreateOrderInput[]>req.body;
 
       //get latly inputted food
-      const foods = await Food.find({
-        _id: { $in: orderInputs.map((orderedFood) => orderedFood.foodId) },
-      });
+  const foodArrayIds = orderInputs.map(({foodId}) => foodId)
+
+      const foods = await Food.find().where('_id').in(foodArrayIds)
+
       let totalAmount = 0.0;
-
+     let  items =Array()
+     
       //calculate the amount of the order
-
       foods.forEach((food) => {
         orderInputs.map(({ foodId, unit }) => {
-          if ((food._id = foodId)) {
+    
+          if ((food._id == foodId)) {
             totalAmount = totalAmount + unit * food.price;
+            items.push({food,unit})
           }
         });
       });
@@ -364,13 +368,18 @@ export const CustomerCreateOrder= async (
 
       const createdOrder =await  Order.create({
         orderId: GenerateRandomOrderId(), //generate a random orderID
-        items: foods,
+        items,
         orderDate: new Date(),
         paidThrought: "COD",
-        paymentResponse: "",
+        paymentResponse: "success",
         orderStatus: "waiting",
+        totalAmount
+      
       });
 
+      // save order of the current user 
+         customer.orders.push(createdOrder)
+        const updatedCustomer =  await customer.save()
       if (createdOrder) {
         return res.status(200).json({
           success: true,
@@ -405,8 +414,8 @@ export const CustomerGetAllOrders= async (
 ) => {
   try {
     const customerId = req.user._id
-    const currentCustomerOrders =await Order.find({customerId})
-    if(currentCustomerOrders&&currentCustomerOrders.length>0){
+    const currentCustomerOrders =await Customer.findById(customerId).populate('orders')
+    if(currentCustomerOrders){
       return res.status(200).json({
         success : true ,
         data : {
@@ -438,12 +447,18 @@ export const CustomerGetOrderById= async (
 ) => {
   try {
     const  orderId=req?.params.id
-    const currentOrder =await Order.findById(orderId).populate('foods') //populate the list of the foods to order document instade of the id
+    const currentOrder =await Order.findById(orderId).populate({
+      path: 'items',
+      populate: {
+        path: 'food'
+      }
+    })//populate the list of the foods to order document instade of the id
+
     if(currentOrder){
       return res.status(200).json({
         success : true ,
         data : {
-          currentOrder
+          orderItems : currentOrder.items
         }
       })
   

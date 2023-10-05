@@ -3,7 +3,7 @@ import multer from "multer";
 
 type Ifile = Express.Multer.File
 
-interface FoodDoc extends Document {
+export interface FoodDoc extends Document {
   name: string;
     discription: string;
     price: number;
@@ -21,20 +21,18 @@ const FoodSchema = new Schema(
     discription: {type:String},
     price: {type : Number},
     vandorId: {type : String},
-     readyTime: {type : String},
-     cathegory:{type : String},
-     foodType: {type : String},
-     rating:{type : Number},
-     images:{type:[Object]as unknown as  [Ifile], required :true} //work around 
+    readyTime: {type : String},
+    cathegory:{type : String},
+    foodType: {type : String},
+    rating:{type : Number},
+    images:{type:[Object]as unknown as  [Ifile], required :true} //work around 
   },
   {
     timestamps: true,
     toJSON: {
       transform: function (doc, ret) {
         // Exclude the 'password' and other field from the JSON representation
-      
         delete ret.__v
-       
         delete ret.createdAt
         delete ret.updatedAt
         
