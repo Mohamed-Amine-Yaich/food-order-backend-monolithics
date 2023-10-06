@@ -31,7 +31,7 @@ const VandorSchema = new Schema(
     serviceAvailable: { type: Boolean, required:true },
     coverImage: { type: [String], required:true },
     rating: { type: Number },
-    foods: [{ type: mongoose.SchemaTypes.ObjectId, ref: "food" }], //ref to  other schema
+    foods: [{ type: Schema.Types.ObjectId, ref: "food" }], //ref to  other schema
   },
   {
     timestamps: true,

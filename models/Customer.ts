@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { CreateFoodInput, CustomerCreateOrderInput } from "../dto";
 import { Order, OrderDoc } from "./Order";
+import { FoodDoc } from "./Food";
 
 interface CustomerDoc extends Document {
   firstName: string;
@@ -16,6 +17,7 @@ interface CustomerDoc extends Document {
   lng:number,
   lat:number,
   orders : [OrderDoc]//[typeof Order|string]
+  cart : [{food: FoodDoc ,unit : number}] 
 }
 
 const CustomerSchema = new Schema(
@@ -32,7 +34,11 @@ const CustomerSchema = new Schema(
     otpExpiry: { type: Date, required:true },
     lng : { type: Number, required:true },
     lat : { type: Number, required:true },
-    orders : [{ type: Schema.Types.ObjectId, ref: "order" }]
+    orders : [{ type: Schema.Types.ObjectId, ref: "order" }],
+    cart : [{ 
+      food  :{ type: Schema.Types.ObjectId, ref: "food" },
+      unit : { type: Number,  },
+    }] 
   },
   {
     timestamps: true,
