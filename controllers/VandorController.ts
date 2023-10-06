@@ -5,7 +5,7 @@ import {
   VandorLoginInput,
   VandorUpdateInput,
 } from "../dto";
-import { Food, Vandor } from "../models";
+import { Food, Order, Vandor } from "../models";
 import { GenrateJWT, VerifyPassword } from "../utility";
 
 
@@ -33,7 +33,7 @@ export const VandorLogin = async (
           name: vendorExist.name,
         };
         const jwt = await GenrateJWT(payload);
-        return res.json({ jwt });
+        return res.json({ jwt,vendorExist });
       }
       return res.json({
         message: "your email or password is not correct",
@@ -370,6 +370,109 @@ export const GetVandorAllFood = async (
           FoodList,
         },
       });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//vandor order 
+//get order with vandor Id 
+//get order details 
+//process order
+
+export const GetVendorOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+    try {
+      const vandorId = req.user?._id;
+      const currentOrders = await Order.find({vandorId});
+     if(currentOrders){
+      return res.status(200).json({
+        success: true,
+        data: {
+          message: "success!",
+          currentOrders,
+        },
+      });
+     }
+    
+     return res.status(500).json({
+      success: false,
+      error : 'error getting current vendor orders'
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const GetOrderDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+    try {
+   const orderId = req.params.id
+    const currentOrder = await Order.findById(orderId).populate('items.food')
+     if(currentOrder){
+      return res.status(200).json({
+        success: true,
+        data: {
+          message: "success!",
+          currentOrder,
+        },
+      });
+     }
+    
+     return res.status(500).json({
+      success: false,
+      error : 'error getting current order details'
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const ProcessOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    const orderId = req.params.id
+     const currentOrder = await Order.findById(orderId)
+   const {orderStatus,readyTime,remarks} = req.body
+
+      if(currentOrder){
+       currentOrder.orderStatus=orderStatus
+       currentOrder.readyTime=readyTime
+       currentOrder.remarks=remarks
+       const processedOrder = await currentOrder.save()
+       if(processedOrder){
+        return res.status(200).json({
+          success: true,
+          data: {
+            message: "success!",
+            processedOrder,
+          },
+        });
+
+       }
+    
+
+
+     
+      }
+     
+      return res.status(500).json({
+       success: false,
+       error : 'error getting current order details'
+     });
+    
   } catch (error) {
     console.log(error);
   }

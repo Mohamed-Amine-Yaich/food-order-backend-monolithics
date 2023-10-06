@@ -1,5 +1,10 @@
 import { Router} from "express";
-import { GetVandorAllFood, GetVandorFood, GetVandorProfile, PostVandorNewFood, UpdateVandorCoverImage, UpdateVandorFood, UpdateVandorProfile, UpdateVandorService, VandorLogin } from "../controllers";
+import { GetVandorAllFood, GetVandorFood, GetVandorProfile,
+     PostVandorNewFood, UpdateVandorCoverImage, UpdateVandorFood, UpdateVandorProfile, UpdateVandorService, VandorLogin,
+    GetVendorOrders,
+    GetOrderDetails,
+    ProcessOrder,
+ } from "../controllers";
 import { checkAuth } from "../middelwares/auth";
 import multer from "multer"
 
@@ -50,6 +55,9 @@ router.get('/food',GetVandorAllFood)
 router.get('/food/:id',GetVandorFood)
 router.patch('/food/:id',UpdateVandorFood)
 
+router.get('/orders',GetVendorOrders)
+router.get('/order/:id',GetOrderDetails)
+router.get('/order/:id/process',ProcessOrder)
 
 
 

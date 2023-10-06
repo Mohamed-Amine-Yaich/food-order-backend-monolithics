@@ -349,7 +349,7 @@ export const CustomerCreateOrder = async (
 ) => {
   try {
     const customerId = req?.user._id;
-    const customer = await Customer.findById(customerId);
+    const customer = await Customer.findById(customerId)
     if (customer) {
       //get orders from req.body [{foodId: , unit: }]
       const orderInputs = <CustomerCreateOrderInput[]>req.body;
@@ -363,9 +363,11 @@ export const CustomerCreateOrder = async (
       let items = Array();
 
       //calculate the amount of the order
+      let vandorId=''
       foods.forEach((food) => {
         orderInputs.map(({ foodId, unit }) => {
           if (food._id == foodId) {
+            vandorId=food.vandorId
             totalAmount = totalAmount + unit * food.price;
             items.push({ food, unit });
           }
@@ -376,22 +378,31 @@ export const CustomerCreateOrder = async (
 
       const createdOrder = await Order.create({
         orderId: GenerateRandomOrderId(), //generate a random orderID
+        vandorId,
         items,
         orderDate: new Date(),
         paidThrought: "COD",
         paymentResponse: "success",
         orderStatus: "waiting",
         totalAmount,
+        remarks :'',
+        deliveryId : '',
+        appliedOffers  : false ,
+        offerId : null,
+        readyTime : 45 // 60 min
       });
 
       // save order of the current user
       customer.orders.push(createdOrder);
+      customer.cart=[]as any 
       const updatedCustomer = await customer.save();
-      if (createdOrder) {
+      if (updatedCustomer) {
+      
+
         return res.status(200).json({
           success: true,
           data: {
-            createdOrder,
+            updatedCustomer,
           },
         });
       }
@@ -463,7 +474,7 @@ export const CustomerGetOrderById = async (
       return res.status(200).json({
         success: true,
         data: {
-          orderItems: currentOrder.items,
+          orderItems: currentOrder
         },
       });
     }

@@ -3,18 +3,24 @@ import { CreateFoodInput } from "../dto";
 
 export interface OrderDoc extends Document {
     orderId: string;
+    vandorId : string,
     paidThrought: [string];
     orderDate: Date;
     paymentResponse: string;
     orderStatus: string;
     totalAmount :number; 
     items: [any]// [CreateFoodInput|string];//list of food ids or document 
-
+    remarks :string
+    deliveryId : string
+    appliedOffers  : string 
+    offerId : string
+    readyTime : number // 60 min
 }
 
 export const OrderSchema = new Schema(
   {
     orderId: { type: String, required:true },
+    vandorId: { type: String, required:true },
     paidThrought: { type: String , required:true},
     orderDate: { type: [], required:true },
     paymentResponse: { type: String, required:true },
@@ -23,7 +29,12 @@ export const OrderSchema = new Schema(
       food : { type: Schema.Types.ObjectId,ref: "food" , required : true},
       unit: { type:Number , required :true}
     }], //ref to  other schema
-    totalAmount:{ type: Number, required:true }
+    totalAmount:{ type: Number },
+    remarks :{ type: String },
+    deliveryId : { type: String },
+    appliedOffers  : { type: Boolean, }, 
+    offerId : { type: String },
+    readyTime : { type: Number }, // 60 min
   },
   {
     timestamps: true,
