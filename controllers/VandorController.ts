@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import {
   CreateFoodInput,
+  CreateOfferInputs,
+  UpdateOfferInputs,
   VandorAuthPayload,
   VandorLoginInput,
   VandorUpdateInput,
 } from "../dto";
-import { Food, Order, Vandor } from "../models";
+import { Food, Offer, Order, Vandor } from "../models";
 import { GenrateJWT, VerifyPassword } from "../utility";
 
 
@@ -471,6 +473,176 @@ export const ProcessOrder = async (
       return res.status(500).json({
        success: false,
        error : 'error getting current order details'
+     });
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/*-----------------vendor offers end points--------- */
+
+
+export const AddVendorNewOffer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    //before creating the offer validate the occurence of the vendor
+    const   VendorId= req.user._id
+     const currentVendor = await Vandor.findById(VendorId)
+
+      if(currentVendor){
+        const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <CreateOfferInputs>req.body
+      let vendors  = []
+      vendors.push(currentVendor)
+     const  createdOffer  = await Offer.create({
+     startValidity:  new Date(startValidity),
+       endValidity :  new Date(endValidity) ,
+        isActive,
+        minValue,
+        offerType,
+        offerAmount,
+        title,
+        description,
+        vendors,
+        bank,
+        bins,
+        pinCode,
+        promoCode,
+        promoType
+      })
+      if(createdOffer){
+        return res.status(200).json({
+          success: true,
+          data: {
+            message: "success!",
+            offer : createdOffer,
+          },
+        });
+      }
+
+
+      }
+      return res.status(500).json({
+        success: false,
+        error : 'an error happend when creating the offer '
+      });
+     
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const UpdateVendorOfferById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    const vendorId = req.user._id
+  const   currentVendor = await Vandor.findById(vendorId)
+ if(currentVendor) {
+  const offerId = req.params.id
+     const targetOffer = await Offer.findById(offerId)
+
+    if(targetOffer){
+      const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <UpdateOfferInputs>req.body
+   
+      targetOffer.startValidity=new Date(startValidity)
+      targetOffer.endValidity=new Date(endValidity) 
+      targetOffer.isActive=isActive
+      targetOffer.minValue=minValue
+      targetOffer.offerType=offerType
+      targetOffer.offerAmount=offerAmount
+      targetOffer.description=description
+      targetOffer.bank=bank
+      targetOffer.bins=bins
+      targetOffer.pinCode=pinCode
+      targetOffer.title=title
+      targetOffer.promoCode=promoCode
+      targetOffer.promoType=promoType
+   
+       const updatedOffer = await targetOffer.save()
+      if(updatedOffer){
+        return res.status(200).json({
+          success: true,
+          data: {
+            message: "success!",
+            offer : updatedOffer,
+          },
+        });
+      }
+   
+   
+      }
+
+  }
+
+  
+
+  
+   return res.status(500).json({
+     success: false,
+     error : 'an error happend when updating the offer '
+   });
+  
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//GetAllVendorOffers get all specific offers created by vendor admin and generic offer
+
+
+export const GetAllVendorOffers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    const vendorId = req.user._id
+    const   currentVendor = await Vandor.findById(vendorId)
+   if(currentVendor) {
+  
+
+    //or op to get genric offertype or vendor offer type with vendors  props list that contains the current vendor 
+       const targetOffer = await Offer.find({  $or:[
+       { $and: [
+          { vendors: { $in: [vendorId] } },
+          { offerType: 'VENDOR' }]},
+          {offerType:'GENERIC'} 
+
+       ]})
+  
+      if(targetOffer){
+     
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              offer : targetOffer,
+            },
+          });
+      
+     
+     
+        }
+  
+    }
+  
+    
+  
+    
+     return res.status(500).json({
+       success: false,
+       error : 'an error happend when getting vendor offers '
      });
     
   } catch (error) {

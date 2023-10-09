@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {  Food, Vandor } from "../models";
+import {  Food, Offer, Vandor } from "../models";
 import { FoodSearchInput } from "../dto";
 
 
@@ -161,5 +161,48 @@ export const GetRestaurantById = async (
     return res.status(500).json({
       message:"Internal server error"
     })
+  }
+};
+
+
+
+//offers in specific Area 
+export const GetOffersInSpecificArea = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    //
+    const pinCode = req.params.pincode
+    const targetOffers = await Offer.find({ pinCode})
+   if(targetOffers) {
+  
+
+    //or op to get genric offertype or vendor offer type with vendors  props list that contains the current vendor 
+     
+
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              offers : targetOffers,
+            },
+          });
+      
+     
+     
+        }
+  
+    
+
+     return res.status(500).json({
+       success: false,
+       error : 'an error happend when getting specific area offers '
+     });
+    
+  } catch (error) {
+    console.log(error);
   }
 };

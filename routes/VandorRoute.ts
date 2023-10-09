@@ -4,6 +4,9 @@ import { GetVandorAllFood, GetVandorFood, GetVandorProfile,
     GetVendorOrders,
     GetOrderDetails,
     ProcessOrder,
+    AddVendorNewOffer,
+    UpdateVendorOfferById,
+    GetAllVendorOffers,
  } from "../controllers";
 import { checkAuth } from "../middelwares/auth";
 import multer from "multer"
@@ -58,6 +61,12 @@ router.patch('/food/:id',UpdateVandorFood)
 router.get('/orders',GetVendorOrders)
 router.get('/order/:id',GetOrderDetails)
 router.get('/order/:id/process',ProcessOrder)
+
+//offers CRUD
+router.post('/offer',AddVendorNewOffer)
+router.patch('/offer/:id',UpdateVendorOfferById)
+router.get('/offers',GetAllVendorOffers)
+
 
 
 

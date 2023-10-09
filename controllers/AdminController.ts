@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { CreateVandorInput } from "../dto";
-import { Vandor } from "../models";
+import { CreateOfferInputs, CreateVandorInput } from "../dto";
+import { Offer, Vandor } from "../models";
 import { GenerateSalt, HashPassword } from "../utility";
 
 export const CreateVandor = async (
@@ -87,6 +87,172 @@ export const GetVandorById = async (
     }
 
     return res.json(vendor);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+
+
+/*-----------------vendor offers end points admin route--------- */
+
+
+export const AddGenricOffer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+  
+    const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <CreateOfferInputs>req.body
+  
+     const  createdOfferByAdmin  = await Offer.create({
+     startValidity:  new Date(startValidity),
+       endValidity :  new Date(endValidity) ,
+        isActive,
+        minValue,
+        offerType:offerType?offerType:"GENERIC",
+        offerAmount,
+        title,
+        description,
+        bank,
+        bins,
+        pinCode,
+        promoCode,
+        promoType
+      })
+      if(createdOfferByAdmin){
+        return res.status(200).json({
+          success: true,
+          data: {
+            message: "success!",
+            offer : createdOfferByAdmin,
+          },
+        });
+      }
+
+
+           return res.status(500).json({
+        success: false,
+        error : 'an error happend when creating the offer '
+      });
+     
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//not completed
+export const UpdateOfferById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+
+  const offerId = req.params.id
+     const targetOffer = await Offer.findById(offerId)
+
+    if(targetOffer){
+      const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <UpdateOfferInputs>req.body
+   
+      targetOffer.startValidity=new Date(startValidity)
+      targetOffer.endValidity=new Date(endValidity) 
+      targetOffer.isActive=isActive
+      targetOffer.minValue=minValue
+      targetOffer.offerType=offerType
+      targetOffer.offerAmount=offerAmount
+      targetOffer.description=description
+      targetOffer.bank=bank
+      targetOffer.bins=bins
+      targetOffer.pinCode=pinCode
+      targetOffer.title=title
+      targetOffer.promoCode=promoCode
+      targetOffer.promoType=promoType
+   
+       const updatedOffer = await targetOffer.save()
+      if(updatedOffer){
+        return res.status(200).json({
+          success: true,
+          data: {
+            message: "success!",
+            offer : updatedOffer,
+          },
+        });
+      }
+   
+   
+      }
+
+  
+
+  
+
+  
+   return res.status(500).json({
+     success: false,
+     error : 'an error happend when updating the offer '
+   });
+  
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//GetAllOffers get all  offers created  
+
+//bot completed
+export const GetAllOffers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    const vendorId = req.user._id
+    const   currentVendor = await Vandor.findById(vendorId)
+   if(currentVendor) {
+  
+
+    //or op to get genric offertype or vendor offer type with vendors  props list that contains the current vendor 
+       const targetOffer = await Offer.find({  $or:[
+       { $and: [
+          { vendors: { $in: [vendorId] } },
+          { offerType: 'VENDOR' }]},
+          {offerType:'GENERIC'} 
+
+       ]})
+  
+      if(targetOffer){
+     
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              offer : targetOffer,
+            },
+          });
+      
+     
+     
+        }
+  
+    }
+  
+    
+  
+    
+     return res.status(500).json({
+       success: false,
+       error : 'an error happend when getting vendor offers '
+     });
+    
   } catch (error) {
     console.log(error);
   }

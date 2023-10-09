@@ -1,5 +1,7 @@
 import {Request,Response,NextFunction, Router} from "express";
-import { GetFoodAvailability, GetFoodBySearch, GetFoodIn30Min, GetRestaurantById, GetTopRestaurants } from "../controllers";
+import { GetFoodAvailability, GetFoodBySearch, GetFoodIn30Min, GetRestaurantById, GetTopRestaurants ,
+    GetOffersInSpecificArea
+} from "../controllers";
 
 
 const router = Router()
@@ -21,6 +23,9 @@ router.get('/search/:pincode',GetFoodBySearch)
 /*------------------------ find Restaurant by Id --------------------------------- */
 
 router.get('/restaurant/:id',GetRestaurantById)
+
+/* --------------------------getOffersInSpecificLocation------------------------------- */
+router.get('/offers/:pincode',GetOffersInSpecificArea)
 
 
 router.get('/',(req:Request,res : Response,next:NextFunction)=>{
