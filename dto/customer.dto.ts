@@ -62,7 +62,14 @@ export interface CustomerAuthPayload {
 
 }
 
-export interface CustomerCreateOrderInput {
+export interface CustomerOrderItemsInput {
    foodId:string,
    unit: number
+}
+
+
+export interface CustomerCreateOrderInput {
+   transId:string,
+   amount : string
+   items : [CustomerOrderItemsInput]
 }

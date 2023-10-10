@@ -176,7 +176,7 @@ export const GetOffersInSpecificArea = async (
   try {
     //
     const pinCode = req.params.pincode
-    const targetOffers = await Offer.find({ pinCode})
+    const targetOffers = await Offer.find({ pinCode,isActive:true})
    if(targetOffers) {
   
 

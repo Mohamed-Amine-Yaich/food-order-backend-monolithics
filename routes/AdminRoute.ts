@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction, Router} from "express";
-import { AddGenricOffer, CreateVandor, GetAllOffers, GetVandorById, GetVandors, UpdateOfferById } from "../controllers";
+import { AddGenericOffer, CreateVandor, GetAllOffers, GetAllTransactions, GetTransactionById, GetVandorById, GetVandors, UpdateOfferById } from "../controllers";
 
 
 const router = Router()
@@ -9,11 +9,15 @@ router.get('/vandors',GetVandors)
 router.get('/vandor/:id',GetVandorById)
 
 
-/* ------------offer end points-------- */
+/* ------------offer end points -------- */
 
-router.post('/offer/:id',AddGenricOffer)
-router.get('/offer/:id',UpdateOfferById)
+router.post('/offer',AddGenericOffer)
+router.patch('/offer/:id',UpdateOfferById)
 router.get('/offers',GetAllOffers)
+
+/*-----------transactions----------*/
+router.get('/transactions',GetAllTransactions)
+router.get('/transaction/:transId',GetTransactionById)
 
 
 

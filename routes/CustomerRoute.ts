@@ -4,7 +4,9 @@ import {CustomerSignUp,CustomerLogin,CustomerVerify,CustomerRequestOTP,
     CustomerCreateOrder,CustomerGetAllOrders,CustomerGetOrderById,
     AddToCart,
     GetCart,
-    DeleteCart} from "../controllers"
+    DeleteCart,
+    CustomerVerifyOffer,
+    CustomerHandlePayment} from "../controllers"
 import { checkAuth } from "../middelwares";
 
 const router = Router()
@@ -26,6 +28,9 @@ router.post('/cart',AddToCart)
 router.get('/cart',GetCart)
 router.delete('/cart',DeleteCart)
 
+//make payment 
+router.post('/create-payment',CustomerHandlePayment)
+
 
 
 //order 
@@ -38,7 +43,9 @@ router.get('/orders',CustomerGetAllOrders)
 router.get('/order/:id',CustomerGetOrderById)
 
 
+//apply offer
 
+router.get('/offer/verify/:id',CustomerVerifyOffer)
 
 
 

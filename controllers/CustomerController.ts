@@ -6,8 +6,9 @@ import {
   CustomerOTPVerificationInputs,
   CustomerCreateOrderInput,
   CreateFoodInput,
+  CustomerOrderItemsInput,
 } from "../dto";
-import { Customer, Food, FoodDoc, Order } from "../models";
+import { Customer, Food, FoodDoc, Offer, Order, Transaction } from "../models";
 import {
   GenerateOTP,
   GenerateRandomOrderId,
@@ -341,6 +342,72 @@ export const UpdateCustomerProfile = async (
   }
 };
 
+
+/* ------------------create payment ------------------ */
+
+export const CustomerHandlePayment  = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const customerId = req.user._id;
+    const currentCustomer = await Customer.findById(customerId);
+ 
+    if (currentCustomer) {
+    const {
+      offerId,
+      orderId,
+      orderValue,
+      vandorId,
+      offerUsed,
+      status,
+      paymentMode,
+      paymenResponse
+    } = req.body
+
+      const targetOffer = await Offer.findById(offerId).where({isActive : true}) // maybe validate time also query 
+
+      let totalAmount = orderValue
+      if (targetOffer) {//if there is a valid offer we apply it
+      console.log('an offer is applyed')
+      totalAmount = totalAmount-targetOffer.offerAmount
+      }
+   // use an api to make the payment happend 
+   //=>base on api response we create the trans
+  
+
+    //create a record of transaction to keep track of the payment the user 
+    const currentTransaction = await Transaction.create({
+      customer:customerId,
+      orderId,
+      orderValue : totalAmount,
+      vandorId,
+      offerUsed,
+      status,
+      paymentMode,
+      paymenResponse,
+    })
+
+     //return transaction 
+     return res.status(200).json({
+      success: true,
+      message: "transaction reacord is created !",
+      data: {
+        transaction: currentTransaction,
+      },
+    });
+    }
+
+   
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "internal error occured",
+    });
+  }
+};
+/* ------------------create order ------------------ */
 //post customer/order
 export const CustomerCreateOrder = async (
   req: Request,
@@ -348,70 +415,82 @@ export const CustomerCreateOrder = async (
   next: NextFunction
 ) => {
   try {
-    const customerId = req?.user._id;
-    const customer = await Customer.findById(customerId)
-    if (customer) {
-      //get orders from req.body [{foodId: , unit: }]
-      const orderInputs = <CustomerCreateOrderInput[]>req.body;
+    // getting specific transaction record for this order and create the order and update the record
+    const { transId, amount, items } = <CustomerCreateOrderInput>req.body;
+    const existingTransRecord = await Transaction.findById(transId)
+    //validate the transaction 
+    if(existingTransRecord&&existingTransRecord?.status.toLocaleLowerCase() != "failed"){
+   //verifying user and creating order stuff
+   const customerId = req?.user._id;
+   const customer = await Customer.findById(customerId);
+   if (customer) {
+     //get orders from req.body [{foodId: , unit: }]
 
-      //get latly inputted food
-      const foodArrayIds = orderInputs.map(({ foodId }) => foodId);
+     //get latly inputted food
+     const foodArrayIds = items.map(({ foodId }) => foodId);
 
-      const foods = await Food.find().where("_id").in(foodArrayIds);
+     const foods = await Food.find().where("_id").in(foodArrayIds);
 
-      let totalAmount = 0.0;
-      let items = Array();
+     let totalAmount = 0.0;
+     let orderItems = Array();
 
-      //calculate the amount of the order
-      let vandorId=''
-      foods.forEach((food) => {
-        orderInputs.map(({ foodId, unit }) => {
-          if (food._id == foodId) {
-            vandorId=food.vandorId
-            totalAmount = totalAmount + unit * food.price;
-            items.push({ food, unit });
-          }
-        });
-      });
+     //calculate the amount of the order
+     let vandorId = "";
+     foods.forEach((food) => {
+       items.map(({ foodId, unit }) => {
+         if (food._id == foodId) {
+           vandorId = food.vandorId;
+           totalAmount = totalAmount + unit * food.price;
+           orderItems.push({ food, unit });
+         }
+       });
+     });
 
-      //create order
+     //create order
+     const orderId = GenerateRandomOrderId()
+     const createdOrder = await Order.create({
+       orderId, //generate a random orderID
+       vandorId,
+       items : orderItems,
+       orderDate: new Date(),
+       orderStatus: "waiting",
+       totalAmount,
+       remarks: "",
+       deliveryId: "",
+       readyTime: 45, // 60 min
+       paidAmount : amount
+     });
 
-      const createdOrder = await Order.create({
-        orderId: GenerateRandomOrderId(), //generate a random orderID
-        vandorId,
-        items,
-        orderDate: new Date(),
-        paidThrought: "COD",
-        paymentResponse: "success",
-        orderStatus: "waiting",
-        totalAmount,
-        remarks :'',
-        deliveryId : '',
-        appliedOffers  : false ,
-        offerId : null,
-        readyTime : 45 // 60 min
-      });
+     // save order of the current user 
+     customer.orders.push(createdOrder);
+     customer.cart = [] as any;
+     const updatedCustomer = await customer.save();
+    
+    // update transaction 
+    existingTransRecord.vandorId = vandorId
+    existingTransRecord.orderId = orderId
+    existingTransRecord.status = 'CONFIRMED'
+    const updatedTransRecord = await existingTransRecord.save()
+     if (updatedCustomer) {
+       return res.status(200).json({
+         success: true,
+         data: {
+           updatedCustomer,
+           createdOrder,
+           updatedTransaction : updatedTransRecord
+         },
+       });
+     }
+   }
 
-      // save order of the current user
-      customer.orders.push(createdOrder);
-      customer.cart=[]as any 
-      const updatedCustomer = await customer.save();
-      if (updatedCustomer) {
-      
+   return res.status(200).json({
+     success: false,
+     error: "something went wrong ",
+   });
+}
 
-        return res.status(200).json({
-          success: true,
-          data: {
-            updatedCustomer,
-          },
-        });
-      }
-    }
 
-    return res.status(200).json({
-      success: false,
-      error: "something went wrong ",
-    });
+   
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -499,7 +578,7 @@ export const AddToCart = async (
 ) => {
   try {
     //read from input (order input [{food,unit}])
-    const { foodId, unit } = <CustomerCreateOrderInput>req.body;
+    const { foodId, unit } = <CustomerOrderItemsInput>req.body;
     const food = await Food.findById(foodId);
     if (food) {
       const customerId = req.user._id;
@@ -622,3 +701,49 @@ export const DeleteCart = async (
     });
   }
 };
+
+
+
+//verifying if an offer(getted by id) is valid 
+export const CustomerVerifyOffer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const CustomerId = req.user._id;
+    const currentCustomer = await Customer.findById(CustomerId);
+ 
+    if (currentCustomer) {
+      const offerId = req.params.id;
+      const targetOffer = await Offer.findById(offerId).where({isActive : true}) //maybe adding validity tothe query 
+      //get  an available and valid offer with a specific query to db to use using these props  startValidity,endValidity,isActive 
+
+      if (targetOffer) {
+
+      //check if promo type is USER then it will be used only one time 
+
+
+
+        return res.status(200).json({
+          success: true,
+          message: "this offer is valid",
+          data: {
+            offer: targetOffer,
+          },
+        });
+      }
+    }
+
+    return res.status(500).json({
+      error: "this offer is not valid!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "internal error occured",
+    });
+  }
+};
+
+

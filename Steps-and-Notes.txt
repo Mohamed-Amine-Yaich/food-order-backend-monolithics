@@ -57,3 +57,27 @@ step 9 :  deploying monolytics API
        - setup ci cd server configuration to run our inegration and test coverages 
          right before deploying our artifacts on the cloud (Degital ocean , aws,elastic beanStalk,google cloud)
        -manage containers by adding kubernetes and igress engine x 
+
+
+some messing steps 
+
+!important step 
+step 10 : order transaction and offer : 
+         -before palacing an order to vendor or we need to create a transaction record     
+         e.g
+         -create transaction : or create-payment (trans record) aslo offer is applied when record is created 
+         -create order :  get the id of the trans record and create an order and update record
+         -adding capability to admin :  adding capability to the admin to get transaction
+         
+         //delivering part  : 
+         -summary  : adding lat lng to vendor for assigning orders to delevery boy
+         -adding property to vendor 
+         -after creating the order exactly at the create order end point assign the order to the nearest valid delivery boy
+         -add new deliveryUser model 
+         -create deliveryUser document 
+         -adding a validation field to the deliveryUser document that should be updated only with admin for proper validation
+         
+ 
+
+
+         

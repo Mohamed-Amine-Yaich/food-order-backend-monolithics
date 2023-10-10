@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { CreateOfferInputs, CreateVandorInput } from "../dto";
-import { Offer, Vandor } from "../models";
+import { CreateOfferInputs, CreateVandorInput, UpdateOfferInputs } from "../dto";
+import { Offer, Transaction, Vandor } from "../models";
 import { GenerateSalt, HashPassword } from "../utility";
 
 export const CreateVandor = async (
@@ -99,7 +99,7 @@ export const GetVandorById = async (
 /*-----------------vendor offers end points admin route--------- */
 
 
-export const AddGenricOffer = async (
+export const AddGenericOffer = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -107,14 +107,14 @@ export const AddGenricOffer = async (
 
   try {
   
-    const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <CreateOfferInputs>req.body
+    const {startValidity,endValidity,isActive,minValue,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <CreateOfferInputs>req.body
   
      const  createdOfferByAdmin  = await Offer.create({
      startValidity:  new Date(startValidity),
        endValidity :  new Date(endValidity) ,
         isActive,
         minValue,
-        offerType:offerType?offerType:"GENERIC",
+        offerType:"GENERIC",
         offerAmount,
         title,
         description,
@@ -159,13 +159,13 @@ export const UpdateOfferById = async (
      const targetOffer = await Offer.findById(offerId)
 
     if(targetOffer){
-      const {startValidity,endValidity,isActive,minValue,offerType,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <UpdateOfferInputs>req.body
+      //need to handle vlaidation on req inputs
+      const {startValidity,endValidity,isActive,minValue,offerAmount,title,description,bank,bins,pinCode,promoCode,promoType} = <UpdateOfferInputs>req.body
    
       targetOffer.startValidity=new Date(startValidity)
       targetOffer.endValidity=new Date(endValidity) 
       targetOffer.isActive=isActive
       targetOffer.minValue=minValue
-      targetOffer.offerType=offerType
       targetOffer.offerAmount=offerAmount
       targetOffer.description=description
       targetOffer.bank=bank
@@ -207,7 +207,7 @@ export const UpdateOfferById = async (
 
 //GetAllOffers get all  offers created  
 
-//bot completed
+
 export const GetAllOffers = async (
   req: Request,
   res: Response,
@@ -215,22 +215,10 @@ export const GetAllOffers = async (
 ) => {
 
   try {
-    const vendorId = req.user._id
-    const   currentVendor = await Vandor.findById(vendorId)
-   if(currentVendor) {
   
-
-    //or op to get genric offertype or vendor offer type with vendors  props list that contains the current vendor 
-       const targetOffer = await Offer.find({  $or:[
-       { $and: [
-          { vendors: { $in: [vendorId] } },
-          { offerType: 'VENDOR' }]},
-          {offerType:'GENERIC'} 
-
-       ]})
-  
+    // get all offers 
+       const targetOffer = await Offer.find()
       if(targetOffer){
-     
           return res.status(200).json({
             success: true,
             data: {
@@ -238,16 +226,8 @@ export const GetAllOffers = async (
               offer : targetOffer,
             },
           });
-      
-     
-     
         }
   
-    }
-  
-    
-  
-    
      return res.status(500).json({
        success: false,
        error : 'an error happend when getting vendor offers '
@@ -257,3 +237,72 @@ export const GetAllOffers = async (
     console.log(error);
   }
 };
+
+//delete offer by id 
+
+
+/* 
+router.get('/transactions',GetAllTransactions)
+router.get('/transaction/:id',GetTransactionById)
+*/
+
+export const GetAllTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // get all
+       const transactions = await Transaction.find()
+      if(transactions){
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              transactions,
+            },
+          });
+        }
+  
+     return res.status(500).json({
+       success: false,
+       error : 'an error happend when getting all transactions '
+     });
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const GetTransactionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+  const transactionId = req.params.transId
+
+    // get all offers 
+       const targetTransaction = await Transaction.findById(transactionId)
+      if(targetTransaction){
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              targetTransaction,
+            },
+          });
+        }
+  
+     return res.status(500).json({
+       success: false,
+       error : 'error when finding transaction occured'
+     });
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+

@@ -1,7 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import multer from "multer";
 
-type Ifile = Express.Multer.File
 
 export interface OfferDoc extends Document {
   offerType: string;//VENDOR //GEERIC
