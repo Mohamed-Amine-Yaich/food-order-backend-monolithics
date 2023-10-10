@@ -47,6 +47,8 @@ export const CreateVandor = async (
       coverImage: [
         "https://onecms-res.cloudinary.com/image/upload/s--NhBzlJY6--/f_auto,q_auto/c_fill,g_auto,h_622,w_830/v1/tdy-migration/17181582.JPG?itok=Ob61xW9w",
       ],
+      lat:0.0,
+      lng:0.0
     });
     return res.json(CreateVandor);
   } catch (error) {
@@ -305,4 +307,5 @@ export const GetTransactionById = async (
     console.log(error);
   }
 };
+
 

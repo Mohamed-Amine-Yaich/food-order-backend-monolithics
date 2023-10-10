@@ -19,6 +19,8 @@ router.get('/offers',GetAllOffers)
 router.get('/transactions',GetAllTransactions)
 router.get('/transaction/:transId',GetTransactionById)
 
+/* ------------------- */
+
 
 
 router.get('/',(req:Request,res : Response,next:NextFunction)=>{

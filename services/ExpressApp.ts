@@ -1,5 +1,5 @@
 import express,{ Application } from "express";
-import { AdminRoute, VandorRoute,CustomerRoute,ShoppingRoute } from "../routes";
+import { AdminRoute, VandorRoute,CustomerRoute,ShoppingRoute,DeliveryUserRoute } from "../routes";
 import bodyParser from "body-parser"; //we can use express no need for extra library
 
 export const ExpressApp = (app: Application) => {
@@ -20,6 +20,7 @@ export const ExpressApp = (app: Application) => {
   app.use('/shopping',ShoppingRoute)
   app.use('/customer',CustomerRoute)
   app.use("/vandor", VandorRoute);
+  app.use("/delivery", DeliveryUserRoute);
  
 
   app.use("*", (req, res, next) => {

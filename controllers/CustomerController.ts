@@ -8,7 +8,7 @@ import {
   CreateFoodInput,
   CustomerOrderItemsInput,
 } from "../dto";
-import { Customer, Food, FoodDoc, Offer, Order, Transaction } from "../models";
+import { Customer, DeliveryUser, Food, FoodDoc, Offer, Order, Transaction, Vandor } from "../models";
 import {
   GenerateOTP,
   GenerateRandomOrderId,
@@ -20,7 +20,6 @@ import {
 } from "../utility";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { Schema } from "mongoose";
 
 export const CustomerSignUp = async (
   req: Request,
@@ -407,6 +406,55 @@ export const CustomerHandlePayment  = async (
     });
   }
 };
+
+
+/* ------------------assign delivery------------------ */
+
+const assignDelivery =async (orderId:string ,vendorId:string) => {
+   
+   
+  const order = await Order.findById(orderId)
+  const vendor = await Vandor.findById(vendorId)
+
+  if(order && vendor){
+    //get the nearest valid delivery boy  
+    const deliveryUser = await DeliveryUser.aggregate([
+      {
+        $addFields: {
+          userDistance: {
+            $sqrt: {
+              $sum: [
+                { $pow: [{ $subtract: ['$lat', vendor.lat] }, 2] },
+                { $pow: [{ $subtract: ['$lng', vendor.lng] }, 2] }
+              ]
+            }
+          }
+        }
+      },
+      {
+        $sort: { userDistance: 1 } // Sort users by distance in ascending order
+      },
+      {
+        $limit: 1 // Limit to the nearest user
+      }
+    ])
+   
+    //assign the order to the delivery user 
+
+
+    console.log(deliveryUser)
+  }
+
+
+  
+}
+
+
+
+
+
+
+
 /* ------------------create order ------------------ */
 //post customer/order
 export const CustomerCreateOrder = async (
@@ -472,6 +520,8 @@ export const CustomerCreateOrder = async (
     existingTransRecord.status = 'CONFIRMED'
     const updatedTransRecord = await existingTransRecord.save()
      if (updatedCustomer) {
+      await assignDelivery(createdOrder._id,vandorId)
+
        return res.status(200).json({
          success: true,
          data: {

@@ -117,6 +117,12 @@ export const UpdateVandorService = async (
     if (vandor === null) {
       return res.json({ message: "there is no such vandor" });
     }
+    //adding lng and lat to specific vendor for delivery 
+    const {lat ,lng} = req.body
+    if(lat&&lng){
+      vandor.lat=lat
+      vandor.lng=lng
+    }
     vandor.serviceAvailable = !vandor.serviceAvailable;
     vandor.save();
     return res.status(200).json({
