@@ -76,6 +76,12 @@ step 10 : order transaction and offer :
          -add new deliveryUser model 
          -create deliveryUser document 
          -adding a validation field to the deliveryUser document that should be updated only with admin for proper validation
+
+         todo  : 
+         -admin update delivery to  valid  deliveryUser
+         -also codepin to assign only deliveryUser that are including the same area as the vendorc
+         -verify the deliveryUser model props => add pincode  and missing props
+         
          
  
 

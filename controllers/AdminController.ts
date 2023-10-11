@@ -308,4 +308,31 @@ export const GetTransactionById = async (
   }
 };
 
-
+//not linked yet
+export const GetAllDeliveryBoys = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // get all
+       const transactions = await Transaction.find()
+      if(transactions){
+          return res.status(200).json({
+            success: true,
+            data: {
+              message: "success!",
+              transactions,
+            },
+          });
+        }
+  
+     return res.status(500).json({
+       success: false,
+       error : 'an error happend when getting all transactions '
+     });
+    
+  } catch (error) {
+    console.log(error);
+  }
+};

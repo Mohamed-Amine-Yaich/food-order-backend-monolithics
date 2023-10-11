@@ -1,7 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
-import { CreateFoodInput, CustomerCreateOrderInput } from "../dto";
-import { Order, OrderDoc } from "./Order";
-import { FoodDoc } from "./Food";
+import mongoose, { Schema, Document } from "mongoose";
 
 interface DeliveryUserDoc extends Document {
   firstName: string;
@@ -15,6 +12,7 @@ interface DeliveryUserDoc extends Document {
   isActive : boolean
   lng:number,
   lat:number,
+  pincode : string
 }
 
 const DeliveryUserSchema = new Schema(
@@ -28,8 +26,9 @@ const DeliveryUserSchema = new Schema(
     salt: { type: String, required:true },
     verified: { type: Boolean},
     isActive: { type: Boolean},
-    lng : { type: Number, required:true },
-    lat : { type: Number, required:true },
+    lng : { type: Number },
+    lat : { type: Number },
+    pincode: { type: String, required:true },
   },
   {
     timestamps: true,

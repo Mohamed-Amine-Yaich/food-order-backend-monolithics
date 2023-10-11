@@ -420,6 +420,7 @@ const assignDelivery =async (orderId:string ,vendorId:string) => {
     //get the nearest valid delivery boy  
     const deliveryUser = await DeliveryUser.aggregate([
       {
+        
         $addFields: {
           userDistance: {
             $sqrt: {
@@ -431,6 +432,7 @@ const assignDelivery =async (orderId:string ,vendorId:string) => {
           }
         }
       },
+      { $match: { pincode: vendor.pincode } },
       {
         $sort: { userDistance: 1 } // Sort users by distance in ascending order
       },
@@ -442,7 +444,7 @@ const assignDelivery =async (orderId:string ,vendorId:string) => {
     //assign the order to the delivery user 
 
 
-    console.log(deliveryUser)
+    console.log('deliveryUsers',deliveryUser)
   }
 
 

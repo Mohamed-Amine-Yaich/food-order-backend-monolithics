@@ -9,7 +9,7 @@ router.post('/signup',DeliverySignUp)
 router.post('/signin',DeliverySignIn)
 
 //Authentication  using middelware
-//
+// some protected route to get the deliveryUser profile and update some deliverUser data 
 
 
 router.get('/',(req:Request,res : Response,next:NextFunction)=>{
