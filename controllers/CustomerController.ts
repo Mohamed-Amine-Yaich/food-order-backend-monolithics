@@ -432,7 +432,7 @@ const assignDelivery =async (orderId:string ,vendorId:string) => {
           }
         }
       },
-      { $match: { pincode: vendor.pincode } },
+      { $match: { pincode: vendor.pincode ,/* verified:true,isActive :true */} },//for getting active and verified delivery user from db
       {
         $sort: { userDistance: 1 } // Sort users by distance in ascending order
       },
@@ -441,15 +441,23 @@ const assignDelivery =async (orderId:string ,vendorId:string) => {
       }
     ])
    
-    //assign the order to the delivery user 
+    //assign the order to the delivery user   
+    //reference the ordre in the delivery user document
+    if(deliveryUser){
+      console.log(deliveryUser)
+      const deliveryId = deliveryUser[0]._id as string 
+      order.deliveryId= deliveryId
+    const updatedOrder =  await order.save()
+    return updatedOrder
+    }
 
-
-    console.log('deliveryUsers',deliveryUser)
+   }
+    
   }
 
 
   
-}
+
 
 
 
@@ -522,13 +530,15 @@ export const CustomerCreateOrder = async (
     existingTransRecord.status = 'CONFIRMED'
     const updatedTransRecord = await existingTransRecord.save()
      if (updatedCustomer) {
-      await assignDelivery(createdOrder._id,vandorId)
+    const orderWithassignedDelivery =   await assignDelivery(createdOrder._id,vandorId)
+
+     //notify the vendor with firebase push notification that an order is comming 
 
        return res.status(200).json({
          success: true,
          data: {
            updatedCustomer,
-           createdOrder,
+           orderWithassignedDelivery,
            updatedTransaction : updatedTransRecord
          },
        });

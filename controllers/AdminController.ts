@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateOfferInputs, CreateVandorInput, UpdateOfferInputs } from "../dto";
-import { Offer, Transaction, Vandor } from "../models";
+import { DeliveryUser, Offer, Transaction, Vandor } from "../models";
 import { GenerateSalt, HashPassword } from "../utility";
 
 export const CreateVandor = async (
@@ -316,20 +316,20 @@ export const GetAllDeliveryBoys = async (
 ) => {
   try {
     // get all
-       const transactions = await Transaction.find()
-      if(transactions){
+       const deliveryUsers = await DeliveryUser.find()
+      if(deliveryUsers){
           return res.status(200).json({
             success: true,
             data: {
               message: "success!",
-              transactions,
+              deliveryUsers,
             },
           });
         }
   
      return res.status(500).json({
        success: false,
-       error : 'an error happend when getting all transactions '
+       error : 'an error happend when getting all delivery users! '
      });
     
   } catch (error) {
